@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="HPX_Fault_UnsupportedOperation">
+    <DisplayName>HPX_Fault_UnsupportedOperation</DisplayName>
+    <FaultRules/>
+    <Properties/>
+    <Set>
+        <Headers>
+            <Header name="Allow">POST</Header>
+        </Headers>
+        <Payload contentType="application/json" variablePrefix="%" variableSuffix="#">
+        {
+				"resourceType":"OperationOutcome",
+				"text":{
+					"status":"generated",
+					"div":"&lt;div&gt;&lt;h1&gt;Operation Outcome&lt;/h1&gt;&lt;table border='1'&gt;&lt;tr&gt;&lt;td style='font-weight: bold;'&gt;error&lt;/td&gt;&lt;td&gt;[]&lt;/td&gt;&lt;td&gt;&lt;pre&gt;Requested method not allowed.&lt;/pre&gt;&lt;/td&gt;\n\t\t\t&lt;/tr&gt;\n\t\t&lt;/table&gt;\n\t&lt;/div&gt;"
+				},
+				"issue":[
+					{
+						"severity":"error",
+              			"code":"not-supported",
+						"details":"Requested method not allowed."
+					}
+				]
+			}
+      	</Payload>
+        <StatusCode>405</StatusCode>
+        <ReasonPhrase>Method Not Allowed</ReasonPhrase>
+    </Set>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+    <AssignTo type="request" transport="http" createNew="false"></AssignTo>
+</AssignMessage>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndpoint name="default">
+    <Description/>
+    <FaultRules/>
+    <Flows/>
+    <PostFlow name="PostFlow">
+        <Request/>
+        <Response/>
+    </PostFlow>
+    <PreFlow name="PreFlow">
+        <Request>
+            <Step>
+                <FaultRules/>
+                <Name>verify-api-key</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>remove-query-param-apikey</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>impose-quota</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>action-processing</Name>
+            </Step>
+        </Request>
+        <Response>
+            <Step>
+                <Condition>serviceCalloutFlag = true</Condition>
+                <FaultRules/>
+                <Name>JavaScriptService-callout-response-processing</Name>
+            </Step>
+        </Response>
+    </PreFlow>
+    <HTTPProxyConnection>
+        <BasePath>/backup/api/ai/connector/fhir</BasePath>
+        <Properties/>
+        <VirtualHost>default</VirtualHost>
+        <VirtualHost>secure</VirtualHost>
+    </HTTPProxyConnection>
+    <RouteRule name="notarget">
+        <Condition>action == "clinic"</Condition>
+    </RouteRule>
+    <RouteRule name="default">
+        <TargetEndpoint>default</TargetEndpoint>
+        <Condition>action != "clinic"</Condition>
+    </RouteRule>
+</ProxyEndpoint>

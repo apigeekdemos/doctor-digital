@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="HPX_RemoveFormatQueryParam">
+    <DisplayName>RemoveFormatQueryParam</DisplayName>
+    <FaultRules/>
+    <Properties/>
+    <Remove>
+        <Headers>
+            <Header name="Authorization"/>
+        </Headers>
+        <QueryParams>
+            <QueryParam name="_format"/>
+        </QueryParams>
+    </Remove>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+    <AssignTo type="request" transport="http" createNew="false"></AssignTo>
+</AssignMessage>

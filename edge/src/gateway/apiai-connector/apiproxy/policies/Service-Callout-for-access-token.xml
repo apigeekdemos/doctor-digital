@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ServiceCallout async="false" continueOnError="false" enabled="true" name="Service-Callout-for-access-token">
+    <DisplayName>Service Callout for access token</DisplayName>
+    <FaultRules/>
+    <Properties/>
+    <Request clearPayload="true" variable="myRequest">
+        <Set>
+            <Headers>
+                <Header name="Authorization">Basic {clientIdSecret}</Header>
+            </Headers>
+            <Verb>POST</Verb>
+        </Set>
+        <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+    </Request>
+    <Response>calloutResponse</Response>
+    <HTTPTargetConnection>
+        <Properties/>
+        <URL>https://{{ connector_domain }}/b2b/oauth/accesstoken?grant_type=client_credentials</URL>
+    </HTTPTargetConnection>
+</ServiceCallout>

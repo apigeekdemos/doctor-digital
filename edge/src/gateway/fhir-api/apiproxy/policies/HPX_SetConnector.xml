@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="HPX_SetConnector">
+    <DisplayName>SetConnector</DisplayName>
+    <FaultRules/>
+    <Properties/>
+    <AssignVariable>
+        <Name>connector_domain</Name>
+        <Value>{{ connector_domain }}</Value>
+    </AssignVariable>
+    <AssignVariable>
+        <Name>connector_basepath</Name>
+        <Value>{{ connector_basepath }}</Value>
+    </AssignVariable>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+    <AssignTo type="request" transport="http" createNew="false"></AssignTo>
+</AssignMessage>

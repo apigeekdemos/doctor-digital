@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndpoint name="default">
+    <DefaultFaultRule name="DefaultFaultRule">
+        <Step>
+            <FaultRules/>
+            <Name>HPX_Fault_GenericFault</Name>
+        </Step>
+        <Step>
+            <FaultRules/>
+            <Name>HPX_CORSSupport</Name>
+        </Step>
+        <AlwaysEnforce>false</AlwaysEnforce>
+    </DefaultFaultRule>
+    <Description></Description>
+    <FaultRules>
+        <FaultRule name="no_response">
+            <Condition>(invokeConnectorAPIResponse == null) and (((request.verb!="OPTIONS") and (isBasePath == false)) or (isBasePath == true)) and (fault.name = "RaiseFault")</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_NoResponse</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_CORSSupport</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="json_threat">
+            <Condition>(fault.name = "ExceededContainerDepth") or (fault.name = "ExceededObjectEntryCount") or 
+              (fault.name = "ExceededArrayElementCount") or (fault.name = "ExceededObjectEntryNameLength") or 
+              (fault.name = "ExceededStringValueLength") or (fault.name = "SourceUnavailable") or 
+              (fault.name = "NonMessageVariable") or (fault.name = "ExecutionFailed")</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_InvalidPayload</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_CORSSupport</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="regex_threat">
+            <Condition>(fault.name = "ThreatDetected") or (threatPresent = true)</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_RegexThreat</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_CORSSupport</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="quota_violation">
+            <Condition>(fault.name = "QuotaViolation") or (fault.name = "SpikeArrestViolation")</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_QuotaViolation</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_CORSSupport</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="unsupported_operation">
+            <Condition>(fault.name = "RaiseFault") and (request.verb!="GET" and request.verb!="POST" and request.verb!="PUT" and request.verb!="DELETE" and request.verb!="OPTIONS")</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_UnsupportedOperation</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_CORSSupport</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="insufficient_scope">
+            <Condition>(fault.name = "RaiseFault") and (validScopeFound != true)</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_InsufficientScope</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_CORSSupport</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="bad_request">
+            <Condition>(fault.name = "RaiseFault") and (isValidFhirResource == false)</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_BadRequest</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_CORSSupport</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="unsupported_resource">
+            <Condition>(fault.name = "RaiseFault") and (isValidFhirResource == true) and (isAllowedResource == false)</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_UnsupportedResource</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_CORSSupport</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="invalid_key_rule">
+            <Condition>(fault.name = "InvalidAPICallAsNoApiProductMatchFound")</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_InvalidCredentials</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_CORSSupport</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="invalid_access_token_rule">
+            <Condition>(fault.name = "InvalidAccessToken") Or (fault.name = "access_token_expired") Or (fault.name = "invalid_access_token") Or (fault.name = "InsufficientScope")</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_InvalidCredentials</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_CORSSupport</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="js_error">
+            <Condition>(JS_Error = true)</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_JSError</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_CORSSupport</Name>
+            </Step>
+        </FaultRule>
+    </FaultRules>
+    <Flows>
+        <Flow name="Patient">
+            <Description></Description>
+            <Request>
+                <Step>
+                    <FaultRules/>
+                    <Name>HPX_ExtractPrimaryResourceTypeAndId</Name>
+                </Step>
+                <Step>
+                    <FaultRules/>
+                    <Name>HPX_ReplacePatientIdLiteral</Name>
+                </Step>
+            </Request>
+            <Response/>
+            <Condition>(primaryResource == "Patient") and (isPreflight == false)</Condition>
+        </Flow>
+        <Flow name="conformance_metadata">
+            <Description></Description>
+            <Request>
+                <Step>
+                    <Condition>(request.header.Accept == "xml") or (request.header.Accept == "XML") or (request.header.Accept == "text/xml") or (request.header.Accept == "application/xml") or (request.header.Accept == "application/xml+fhir") or (request.header.Accept == "application/xml+fhir;charset=UTF-8")</Condition>
+                    <FaultRules/>
+                    <Name>HPX_Conformance_XML</Name>
+                </Step>
+                <Step>
+                    <Condition>(request.header.Accept != "xml") and (request.header.Accept != "XML") and (request.header.Accept != "text/xml") and (request.header.Accept != "application/xml") and (request.header.Accept != "application/xml+fhir") and (request.header.Accept != "application/xml+fhir;charset=UTF-8")</Condition>
+                    <FaultRules/>
+                    <Name>HPX_Conformance_JSON</Name>
+                </Step>
+            </Request>
+            <Response/>
+            <Condition>(((proxy.pathsuffix MatchesPath "/metadata") and (request.verb = "GET")) or ((proxy.pathsuffix MatchesPath "/") and (request.verb = "OPTIONS")) ) and (isBasePath == true)</Condition>
+        </Flow>
+    </Flows>
+    <PostFlow name="PostFlow">
+        <Request/>
+        <Response/>
+    </PostFlow>
+    <PreFlow name="PreFlow">
+        <Request>
+            <Step>
+                <Condition>((request.header.Access-Control-Request-Method != null) and (request.header.Access-Control-Request-Method != "")) and (request.verb =="OPTIONS")</Condition>
+                <FaultRules/>
+                <Name>HPX_CORSPreflight</Name>
+            </Step>
+            <Step>
+                <Condition>!(((request.header.Access-Control-Request-Method != null) and (request.header.Access-Control-Request-Method != "")) and (request.verb =="OPTIONS"))</Condition>
+                <FaultRules/>
+                <Name>HPX_VerifyAccessToken</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_SetConnector</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_InitialConfiguration_JS</Name>
+            </Step>
+            <Step>
+                <Condition>(request.verb!="GET" and request.verb!="POST" and request.verb!="PUT" and request.verb!="DELETE" and request.verb!="OPTIONS") or (validScopeFound != true) or (isAllowedResource != true)</Condition>
+                <FaultRules/>
+                <Name>HPX_RaiseFault_Generic</Name>
+            </Step>
+            <Step>
+                <Condition>isPreflight == false</Condition>
+                <FaultRules/>
+                <Name>HPX_EnforceRateLimit</Name>
+            </Step>
+            <Step>
+                <Condition>isPreflight == false</Condition>
+                <FaultRules/>
+                <Name>HPX_EnforceQuota</Name>
+            </Step>
+            <Step>
+                <Condition>isPreflight == false</Condition>
+                <FaultRules/>
+                <Name>HPX_CheckURIParamRegex</Name>
+            </Step>
+            <Step>
+                <Condition>!(((proxy.pathsuffix MatchesPath "/") and (request.verb = "POST") and (isBasePath == true)) or (request.verb = "GET") or (request.verb = "OPTIONS"))</Condition>
+                <FaultRules/>
+                <Name>HPX_CheckPayloadRegex</Name>
+            </Step>
+            <Step>
+                <Condition>isPreflight == false</Condition>
+                <FaultRules/>
+                <Name>HPX_CheckQueryParamRegex</Name>
+            </Step>
+            <Step>
+                <Condition>(threatPresent = true) and (isPreflight == false)</Condition>
+                <FaultRules/>
+                <Name>HPX_RaiseFault_Generic</Name>
+            </Step>
+            <Step>
+                <Condition>isPreflight == false</Condition>
+                <FaultRules/>
+                <Name>HPX_ExtractTokenAttributes</Name>
+            </Step>
+            <Step>
+                <Condition>isPreflight == false</Condition>
+                <FaultRules/>
+                <Name>HPX_GetDeveloperFromCache</Name>
+            </Step>
+            <Step>
+                <Condition>(lookupcache.GetDeveloperFromCache.cachehit is true) and (isPreflight == false)</Condition>
+                <FaultRules/>
+                <Name>HPX_ExtractDeveloperInfoFromDeveloperCache</Name>
+            </Step>
+            <Step>
+                <Condition>(lookupcache.GetDeveloperFromCache.cachehit is false) and (isPreflight == false)</Condition>
+                <FaultRules/>
+                <Name>HPX_GetDeveloperInfo</Name>
+            </Step>
+            <Step>
+                <Condition>(lookupcache.GetDeveloperFromCache.cachehit is false) and (isPreflight == false)</Condition>
+                <FaultRules/>
+                <Name>HPX_AddDeveloperToCache</Name>
+            </Step>
+            <Step>
+                <Condition>(lookupcache.GetDeveloperFromCache.cachehit is false) and (isPreflight == false)</Condition>
+                <FaultRules/>
+                <Name>HPX_ExtractDeveloperInfoFromDeveloper</Name>
+            </Step>
+            <Step>
+                <Condition>((request.queryparam._format != "") and (request.queryparam._format != null))  and (isPreflight == false)</Condition>
+                <FaultRules/>
+                <Name>HPX_GetResponseFormatFromQueryParam</Name>
+            </Step>
+            <Step>
+                <Condition>isPreflight == false</Condition>
+                <FaultRules/>
+                <Name>HPX_RemoveFormatQueryParam</Name>
+            </Step>
+            <Step>
+                <Condition>(((request.header.Accept = null) or (request.header.Accept = "") or (request.header.Accept = "*/*")) and (!(proxy.pathsuffix ~~ ".*Binary.*")) and (isPreflight == false))</Condition>
+                <FaultRules/>
+                <Name>HPX_SetAcceptHeader</Name>
+            </Step>
+        </Request>
+        <Response>
+            <Step>
+                <Condition>(request.verb="GET") and (isBasePath == true)</Condition>
+                <FaultRules/>
+                <Name>HPX_Servicecallout.InvokeGETB2B</Name>
+            </Step>
+            <Step>
+                <Condition>(request.verb="GET") and (isBasePath == false)</Condition>
+                <FaultRules/>
+                <Name>HPX_Servicecallout.InvokeGET</Name>
+            </Step>
+            <Step>
+                <Condition>(request.verb = "POST" ) and (path MatchesPath "/_search") and (isBasePath == false)</Condition>
+                <FaultRules/>
+                <Name>HPX_Servicecallout.InvokePOSTSearch</Name>
+            </Step>
+            <Step>
+                <Condition>(request.verb = "POST") and (((!(path MatchesPath "/_search")) and (isBasePath == false)) or (isBasePath == true))</Condition>
+                <FaultRules/>
+                <Name>HPX_Servicecallout.InvokePOST</Name>
+            </Step>
+            <Step>
+                <Condition>(request.verb = "PUT")</Condition>
+                <FaultRules/>
+                <Name>HPX_Servicecallout.InvokePUT</Name>
+            </Step>
+            <Step>
+                <Condition>(request.verb="DELETE") and (isBasePath == false)</Condition>
+                <FaultRules/>
+                <Name>HPX_Servicecallout.InvokeDELETE</Name>
+            </Step>
+            <Step>
+                <Condition>(conformanceResponse != "true") and(invokeConnectorAPIResponse == null) and (isPreflight == false)</Condition>
+                <FaultRules/>
+                <Name>HPX_RaiseFault_Generic</Name>
+            </Step>
+            <Step>
+                <Condition>isPreflight == false</Condition>
+                <FaultRules/>
+                <Name>HPX_CORSSupport</Name>
+            </Step>
+            <Step>
+                <Condition>(invokeConnectorAPIResponse != null) and (response.status.code == 200 or response.status.code == 201) and (isPreflight == false)</Condition>
+                <FaultRules/>
+                <Name>HPX_ReplaceInternalProxyLinkURLs</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_RemoveRequestHeader</Name>
+            </Step>
+        </Response>
+    </PreFlow>
+    <HTTPProxyConnection>
+        <BasePath>/fhir/v1</BasePath>
+        <Properties/>
+        <VirtualHost>secure</VirtualHost>
+    </HTTPProxyConnection>
+    <RouteRule name="default"/>
+</ProxyEndpoint>

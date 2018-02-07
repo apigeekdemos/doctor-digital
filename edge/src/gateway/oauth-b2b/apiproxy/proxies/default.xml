@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndpoint name="default">
+    <Description></Description>
+    <FaultRules>
+        <FaultRule name="default">
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_InvalidRequest</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="unsupported_operation">
+            <Condition>(proxy.pathsuffix MatchesPath "/accesstoken")  and (request.verb != "POST")</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_UnsupportedOperation</Name>
+            </Step>
+        </FaultRule>
+    </FaultRules>
+    <Flows>
+        <Flow name="generate-access-token">
+            <Description></Description>
+            <Request>
+                <Step>
+                    <FaultRules/>
+                    <Name>HPX_GenerateAccessToken</Name>
+                </Step>
+            </Request>
+            <Response>
+                <Step>
+                    <FaultRules/>
+                    <Name>HPX_GenerateAccessToken.Response</Name>
+                </Step>
+            </Response>
+            <Condition>(proxy.pathsuffix MatchesPath "/accesstoken") and (request.verb = "POST")</Condition>
+        </Flow>
+        <Flow name="default">
+            <Request>
+                <Step>
+                    <FaultRules/>
+                    <Name>HPX_RaiseFault_Generic</Name>
+                </Step>
+            </Request>
+            <Response/>
+        </Flow>
+    </Flows>
+    <PostFlow name="PostFlow">
+        <Request/>
+        <Response/>
+    </PostFlow>
+    <PreFlow name="PreFlow">
+        <Request/>
+        <Response/>
+    </PreFlow>
+    <HTTPProxyConnection>
+        <BasePath>/b2b/oauth</BasePath>
+        <Properties/>
+        <VirtualHost>secure</VirtualHost>
+    </HTTPProxyConnection>
+    <RouteRule name="noroute"/>
+</ProxyEndpoint>

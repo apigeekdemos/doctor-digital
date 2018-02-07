@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<APIProxy revision="4" name="apiai-connector">
+    <Basepaths>/api/ai/connector/fhir</Basepaths>
+    <ConfigurationVersion majorVersion="4" minorVersion="0"/>
+    <CreatedAt>1517172440254</CreatedAt>
+    <CreatedBy>rmahalank@apigee.com</CreatedBy>
+    <DisplayName>apiai-connector</DisplayName>
+    <LastModifiedAt>1517172440254</LastModifiedAt>
+    <LastModifiedBy>rmahalank@apigee.com</LastModifiedBy>
+    <Policies>
+        <Policy>Assign-Auth-Basic-Header</Policy>
+        <Policy>Extract-Variables-for-access-token</Policy>
+        <Policy>JavaScript-Basic-Auth</Policy>
+        <Policy>JavaScriptService-callout-response-processing</Policy>
+        <Policy>Lookup-Cache-for-access-token</Policy>
+        <Policy>Populate-Cache-for-access-token</Policy>
+        <Policy>Service-Callout-for-access-token</Policy>
+        <Policy>Service-Callout-to-fhir-apis</Policy>
+        <Policy>action-processing</Policy>
+        <Policy>add-cors</Policy>
+        <Policy>impose-quota</Policy>
+        <Policy>remove-query-param-apikey</Policy>
+        <Policy>verify-api-key</Policy>
+    </Policies>
+    <ProxyEndpoints>
+        <ProxyEndpoint>default</ProxyEndpoint>
+    </ProxyEndpoints>
+    <Resources>
+        <Resource>jsc://action-processing.js</Resource>
+        <Resource>jsc://base64.js</Resource>
+        <Resource>jsc://basic-auth.js</Resource>
+        <Resource>jsc://service-callout-response-processing.js</Resource>
+    </Resources>
+    <Spec></Spec>
+    <TargetServers/>
+    <TargetEndpoints/>
+</APIProxy>

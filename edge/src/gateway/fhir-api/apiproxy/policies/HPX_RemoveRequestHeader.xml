@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="HPX_RemoveRequestHeader">
+    <DisplayName>RemoveRequestHeader</DisplayName>
+    <FaultRules/>
+    <Properties/>
+    <Remove>
+        <Headers>
+            <Header name="Accept"/>
+            <Header name="Accept-Encoding"/>
+            <Header name="Accept-Language"/>
+            <Header name="User-Agent"/>
+            <Header name="X-Forwarded-For"/>
+            <Header name="X-Forwarded-Port"/>
+            <Header name="X-Forwarded-Proto"/>
+        </Headers>
+    </Remove>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+    <AssignTo type="request" transport="http" createNew="false"></AssignTo>
+</AssignMessage>

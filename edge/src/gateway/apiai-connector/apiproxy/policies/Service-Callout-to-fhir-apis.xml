@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ServiceCallout async="false" continueOnError="false" enabled="true" name="Service-Callout-to-fhir-apis">
+    <DisplayName>Service Callout: to fhir apis</DisplayName>
+    <FaultRules/>
+    <Properties/>
+    <Request clearPayload="true" variable="myRequest2">
+        <Set>
+            <Headers>
+                <Header name="Authorization">Bearer {accesstoken}</Header>
+            </Headers>
+            <Payload contentType="application/json" variablePrefix="@" variableSuffix="#">
+            @reqBody#
+            </Payload>
+            <Verb>{verb}</Verb>
+        </Set>
+        <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+    </Request>
+    <Response>fhirResponse</Response>
+    <HTTPTargetConnection>
+        <Properties/>
+        <URL>https://{{ connector_domain }}/{path}</URL>
+    </HTTPTargetConnection>
+</ServiceCallout>

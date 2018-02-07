@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Quota async="false" continueOnError="false" enabled="true" name="impose-quota">
+    <DisplayName>Impose Quota</DisplayName>
+    <FaultRules/>
+    <Properties/>
+    <Allow count="2000" countRef="verifyapikey.verify-api-key.apiproduct.developer.quota.limit"/>
+    <Interval ref="verifyapikey.verify-api-key.apiproduct.developer.quota.interval">1</Interval>
+    <DataStoreFailureModeOpen>false</DataStoreFailureModeOpen>
+    <Distributed>true</Distributed>
+    <PreciseAtSecondsLevel>false</PreciseAtSecondsLevel>
+    <Synchronous>true</Synchronous>
+    <TimeUnit ref="verifyapikey.verify-api-key.apiproduct.developer.quota.timeunit">month</TimeUnit>
+</Quota>

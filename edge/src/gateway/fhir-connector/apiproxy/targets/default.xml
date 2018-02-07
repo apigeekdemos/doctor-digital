@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TargetEndpoint name="default">
+    <DefaultFaultRule name="DefaultFaultRule">
+        <Step>
+            <FaultRules/>
+            <Name>HPX_Fault_GenericFault</Name>
+        </Step>
+        <AlwaysEnforce>false</AlwaysEnforce>
+    </DefaultFaultRule>
+    <Description></Description>
+    <FaultRules>
+        <FaultRule name="js_error">
+            <Condition>(JS_Error = true)</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_JSError</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="target_error">
+            <Condition>(flag==true)</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_TargetErrors</Name>
+            </Step>
+        </FaultRule>
+    </FaultRules>
+    <Flows>
+        <Flow name="fetch_pagination_data">
+            <Description></Description>
+            <Request>
+                <Step>
+                    <FaultRules/>
+                    <Name>HPX_AssignPaginationAttributes</Name>
+                </Step>
+            </Request>
+            <Response/>
+            <Condition>((request.verb = "GET") and (request.queryparam.stateid != null and request.queryparam.stateid != "" ))</Condition>
+        </Flow>
+    </Flows>
+    <PostFlow name="PostFlow">
+        <Request/>
+        <Response/>
+    </PostFlow>
+    <PreFlow name="PreFlow">
+        <Request/>
+        <Response>
+            <Step>
+                <Condition>(response.status.code != 200) and (response.status.code != 201) and (response.status.code != 204)</Condition>
+                <FaultRules/>
+                <Name>HPX_ValidateTargetResponse</Name>
+            </Step>
+            <Step>
+                <Condition>flag=="true"</Condition>
+                <FaultRules/>
+                <Name>HPX_RaiseFault_Generic</Name>
+            </Step>
+        </Response>
+    </PreFlow>
+    <HTTPTargetConnection>
+        <LoadBalancer>
+            <MaxFailures>0</MaxFailures>
+            <RetryEnabled>true</RetryEnabled>
+            <Server name="fhirserver">
+                <IsEnabled>true</IsEnabled>
+                <IsFallback>false</IsFallback>
+                <Weight>1</Weight>
+            </Server>
+        </LoadBalancer>
+        <Path>/{targetBaseURI}</Path>
+        <Properties>
+            <Property name="success.codes">1xx,2xx,3xx,4xx,5xx</Property>
+        </Properties>
+    </HTTPTargetConnection>
+</TargetEndpoint>

@@ -1,0 +1,22 @@
+
+{
+  "name": "digitalhealth",
+  "version": "1.0.0",
+  "description": "Digital health",
+  "main": "gulpfile.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git"
+  },
+  "author": "Rohan Mahalank",
+  "license": "ISC",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "edge-launchpad": "^2.0.2"
+  }
+}

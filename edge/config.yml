@@ -1,0 +1,124 @@
+resources:
+- name: digitalhealth
+  type: solutions.api
+  properties:
+    inputs:
+    - name: org
+      prompt: Edge Org name
+    - name: username
+      prompt: Edge Username
+      ifNotPresent: token
+    - name: password
+      prompt: Edge Password
+      ifNotPresent: token
+    - name: env
+      prompt: Edge Org Environment
+    - name: target_server_host
+      prompt: Target server host URL
+      default: fhirtest.uhn.ca
+    - name: target_server_port
+      prompt: Target server port
+      default: 80
+    - name: target_server_basepath
+      prompt: Target server basepath
+      default: /baseDstu2
+    configurations:
+    - env : dev
+      edge_host: https://api.enterprise.apigee.com
+      host: '{{ org }}-{{ env }}.apigee.net'
+    - env: test
+      edge_host: https://api.enterprise.apigee.com
+      host: '{{ org }}-{{ env }}.apigee.net'
+    - env : prod
+      edge_host: https://api.enterprise.apigee.com
+      host: '{{ org }}-{{ env }}.apigee.net'
+
+    edgeOrg:
+    script: gulpfile.js
+    basePath: .
+    dependencies:
+    subResources:
+    - name: target_server
+      type: targetServer
+      items:
+      - name: target_server_1
+        payload: '{ "host": "{{ target_server_host }}","isEnabled": true,"name": "fhirserver","port": "{{ target_server_port }}"}'
+    - name: cacheResources
+      type: cache
+      items:
+      - name: access-token
+        payload: '{ "name": "access-token"}'
+    - name: replace_variables_fhir
+      type: configSubstitutions
+      items:
+      - name: connector_domain
+        filePaths: ['src/gateway/fhir-api/target/apiproxy/policies/HPX_SetConnector.xml']
+        value: '{{ org }}-{{ env }}.apigee.net'
+      - name: connector_basepath
+        filePaths: ['src/gateway/fhir-api/target/apiproxy/policies/HPX_SetConnector.xml']
+        value: 'hapi-dstu2'
+      - name: targetBaseURI
+        filePaths: ['src/gateway/fhir-connector/target/apiproxy/policies/HPX_SetTargetBasepath.xml']
+        value: '{{ target_server_basepath }}'
+
+    - name: fhir_proxies
+      type: proxy
+      items:
+      - name: fhir-api
+      - name: fhir-connector
+      - name: oauth-b2b
+
+    - name: developers
+      type: developer
+      items:
+      - payload: '{"email":"testuser@apigee.com", "firstName":"test","lastName":"user","userName":"testuser"}'
+        email: testuser@apigee.com
+
+    - name: apiProducts
+      type: product
+      items:
+      - name: testFHIRproduct
+        payload: '{"approvalType":"auto","attributes": [{"name": "RATE_LIMIT_OVERRIDE_LIMIT","value": "100ps"}],"displayName":"testFHIRproduct","name":"testFHIRproduct","environments":["{{ env }}"],"proxies": ["fhir-api"],"apiResources":["/","/**"],"quota": "10000", "quotaInterval": "1", "quotaTimeUnit": "minute","scopes" : ["patient/Allergyintolerance.read","patient/Allergyintolerance.write","patient/Appointment.read","patient/Appointment.write","patient/Careplan.read","patient/Careplan.write","patient/Condition.read","patient/Condition.write","patient/Coverage.read","patient/Coverage.write","patient/Diagnosticorder.read","patient/Diagnosticorder.write","patient/Diagnosticreport.read","patient/Diagnosticreport.write","patient/Documentreference.read","patient/Documentreference.write","patient/Encounter.read","patient/Encounter.write","patient/Immunization.read","patient/Immunization.write","patient/Location.read","patient/Location.write","patient/Medicationadministration.read","patient/Medicationadministration.write","patient/Medicationdispense.read","patient/Medicationdispense.write","patient/Medicationorder.read","patient/Medicationorder.write","patient/Medicationstatement.read","patient/Medicationstatement.write","patient/Observation.read","patient/Observation.write","patient/Patient.read","patient/Patient.write","patient/Practitioner.read","patient/Practitioner.write","patient/Procedure.read","patient/Procedure.write","patient/Schedule.read","patient/Schedule.write","user/Allergyintolerance.read","user/Allergyintolerance.write","user/Appointment.read","user/Appointment.write","user/Careplan.read","user/Careplan.write","user/Condition.read","user/Condition.write","user/Coverage.read","user/Coverage.write","user/Diagnosticorder.read","user/Diagnosticorder.write","user/Diagnosticreport.read","user/Diagnosticreport.write","user/Documentreference.read","user/Documentreference.write","user/Encounter.read","user/Encounter.write","user/Immunization.read","user/Immunization.write","user/Location.read","user/Location.write","user/Medicationadministration.read","user/Medicationadministration.write","user/Medicationdispense.read","user/Medicationdispense.write","user/Medicationorder.read","user/Medicationorder.write","user/Medicationstatement.read","user/Medicationstatement.write","user/Observation.read","user/Observation.write","user/Patient.read","user/Patient.write","user/Practitioner.read","user/Practitioner.write","user/Procedure.read","user/Procedure.write","user/Schedule.read","user/Schedule.write"]}'
+
+    - name: developerApps
+      type: app
+      items:
+      - name: testFHIRApp
+        payload: '{"name":"testFHIRApp","callback":"https://{{ org }}-{{ env }}.apigee.net","email":"testuser@apigee.com","apiProducts":"testFHIRproduct"}'
+        assignResponse:
+        - from: credentials.0.consumerKey
+          to: clientId
+        - from: credentials.0.consumerSecret
+          to: clientSecret
+
+    - name: replace_variables_apiai
+      type: configSubstitutions
+      items:
+      - name: connector_domain
+        filePaths: ['src/gateway/apiai-connector/target/apiproxy/policies/Service-Callout-to-fhir-apis.xml','src/gateway/apiai-connector/target/apiproxy/policies/Service-Callout-for-access-token.xml']
+        value: '{{ org }}-{{ env }}.apigee.net'
+      - name: clientId
+        filePaths: ['src/gateway/apiai-connector/target/apiproxy/resources/jsc/basic-auth.js']
+        value: '{{clientId}}'
+      - name: clientSecret
+        filePaths: ['src/gateway/apiai-connector/target/apiproxy/resources/jsc/basic-auth.js']
+        value: '{{clientSecret}}'
+
+    - name: apiai_proxies
+      type: proxy
+      items:
+      - name: apiai-connector
+      - name: apiai-connector-backup
+
+    - name: apiaiProducts
+      type: product
+      items:
+      - name: apiaiproduct
+        payload: '{"approvalType":"auto","displayName":"api.ai connector product","name":"apiaiConnectorProduct","environments":["{{ env }}"],"proxies": ["apiai-connector","apiai-connector-backup"],"apiResources":["/","/**"]}'
+
+    - name: apiaideveloperApps
+      type: app
+      items:
+      - name: apiAiApp
+        payload: '{"name":"apiAiApp","callback":"https://localhost.apigee.net","email":"testuser@apigee.com","apiProducts":"apiaiConnectorProduct"}'
+

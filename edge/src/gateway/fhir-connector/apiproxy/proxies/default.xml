@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndpoint name="default">
+    <DefaultFaultRule name="DefaultFaultRule">
+        <Step>
+            <FaultRules/>
+            <Name>HPX_Fault_GenericFault</Name>
+        </Step>
+        <AlwaysEnforce>false</AlwaysEnforce>
+    </DefaultFaultRule>
+    <Description></Description>
+    <FaultRules>
+        <FaultRule name="access_forbidden">
+            <Condition>fault.name = "IPDeniedAccess"</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_AccessControl</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="bad_request">
+            <Condition>fault.name = "RaiseFault"</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_BadRequest</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="json_xml_threat">
+            <Condition>(fault.name = "ExceededContainerDepth") or (fault.name = "ExceededObjectEntryCount") or 
+              (fault.name = "ExceededArrayElementCount") or (fault.name = "ExceededObjectEntryNameLength") or 
+              (fault.name = "ExceededStringValueLength") or (fault.name = "SourceUnavailable") or 
+              (fault.name = "NonMessageVariable") or (fault.name = "ExecutionFailed") or (fault.name = "NodeDepthExceeded") or (fault.name = "AttrCountExceeded") or (fault.name = "ChildCountExceeded") or (fault.name = "NSCountExceeded") or (fault.name = "ElemNameExceeded") or (fault.name = "AttrNameExceeded") or (fault.name = "AttrValueExceeded") or (fault.name = "NSPrefixExceeded") or (fault.name = "NSURIExceeded")</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_InvalidPayload</Name>
+            </Step>
+        </FaultRule>
+        <FaultRule name="js_error">
+            <Condition>(JS_Error = true)</Condition>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_Fault_JSError</Name>
+            </Step>
+        </FaultRule>
+    </FaultRules>
+    <Flows>
+        <Flow name="fetch_complete_record">
+            <Description></Description>
+            <Request/>
+            <Response/>
+            <Condition>request.verb = "GET" and ((path MatchesPath "/*/$everything" and (primaryResource= "Encounter" or primaryResource= "Patient")) or (path MatchesPath "/$everything" and (primaryResource= "Patient")))</Condition>
+        </Flow>
+        <Flow name="fetch_pagination_data">
+            <Description></Description>
+            <Request/>
+            <Response/>
+            <Condition>((request.verb = "GET") and (request.queryparam.stateid != null and request.queryparam.stateid != "" ))		</Condition>
+        </Flow>
+        <Flow name="resource_search">
+            <Description></Description>
+            <Request>
+                <Step>
+                    <Condition>request.header.patient!=null and request.header.patient!="" and !(primaryResource= "Coverage" or primaryResource= "Practitioner" or primaryResource= "Patient" or primaryResource= "Schedule")</Condition>
+                    <FaultRules/>
+                    <Name>HPX_SetPatientId</Name>
+                </Step>
+                <Step>
+                    <Condition>request.header.patient!=null and request.header.patient!="" and primaryResource= "Patient"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_SetPatientIdForPatient</Name>
+                </Step>
+                <Step>
+                    <Condition>request.header.patient!=null and request.header.patient!="" and primaryResource= "Schedule"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_SetPatientIdForSchedule</Name>
+                </Step>
+            </Request>
+            <Response/>
+            <Condition>(request.verb = "GET") and (path ~~ "(/?)$") and (isBasePath == false)</Condition>
+        </Flow>
+        <Flow name="resource_search_post">
+            <Description></Description>
+            <Request/>
+            <Response/>
+            <Condition>(request.verb = "POST" ) and (path MatchesPath "/_search") and (isBasePath == false)</Condition>
+        </Flow>
+        <Flow name="resource_tag">
+            <Description>it gives the tags related to particular resource</Description>
+            <Request/>
+            <Response/>
+            <Condition>(request.verb = "GET") and ((path MatchesPath "/$meta") or ((path MatchesPath "/*/$meta") or (path MatchesPath "/*/_history/*/$meta") and (isBasePath == false)))</Condition>
+        </Flow>
+        <Flow name="resource_history">
+            <Description></Description>
+            <Request/>
+            <Response/>
+            <Condition>(request.verb = "GET") and ((path MatchesPath "/_history") or ((path MatchesPath "/*/_history") and (isBasePath == false)))</Condition>
+        </Flow>
+        <Flow name="composition">
+            <Description></Description>
+            <Request/>
+            <Response/>
+            <Condition>((path MatchesPath "/Composition") or (path MatchesPath "/Composition/*")) and (request.verb = "GET") and (isBasePath == true)</Condition>
+        </Flow>
+        <Flow name="binary_read">
+            <Description></Description>
+            <Request/>
+            <Response/>
+            <Condition>((path MatchesPath "/Binary") or (path MatchesPath "/Binary/*") or (path MatchesPath "/Binary/*/_history/*")) and (request.verb = "GET") and (isBasePath == true)</Condition>
+        </Flow>
+        <Flow name="resource_read">
+            <Description></Description>
+            <Request/>
+            <Response/>
+            <Condition>(request.verb = "GET") and (path MatchesPath "/*") and (request.queryparams.count == 0) and (isBasePath == false)</Condition>
+        </Flow>
+        <Flow name="resource_vread">
+            <Description></Description>
+            <Request/>
+            <Response/>
+            <Condition>(request.verb = "GET") and (path MatchesPath "/*/_history/*") and (isBasePath == false)</Condition>
+        </Flow>
+        <Flow name="resource_compartment_search">
+            <Description></Description>
+            <Request/>
+            <Response/>
+            <Condition>(request.verb = "GET") and (path MatchesPath "/*/*") and (isBasePath == false)</Condition>
+        </Flow>
+        <Flow name="resource_update">
+            <Description></Description>
+            <Request>
+                <Step>
+                    <Condition>request.header.Content-Type="application/xml"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_CheckXMLThreat</Name>
+                </Step>
+                <Step>
+                    <Condition>request.header.Content-Type="application/json"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_CheckJSONThreat</Name>
+                </Step>
+            </Request>
+            <Response/>
+            <Condition>(request.verb = "PUT") and (((path MatchesPath "/*") and (request.queryparams.count == 0) and (isBasePath == false)) or ((path MatchesPath "/Binary/*") and (isBasePath == true)))</Condition>
+        </Flow>
+        <Flow name="resource_conditional_update">
+            <Description></Description>
+            <Request>
+                <Step>
+                    <Condition>request.header.Content-Type="application/xml"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_CheckXMLThreat</Name>
+                </Step>
+                <Step>
+                    <Condition>request.header.Content-Type="application/json"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_CheckJSONThreat</Name>
+                </Step>
+            </Request>
+            <Response/>
+            <Condition>(request.verb = "PUT") and (path MatchesPath "/") and (request.queryparams.count &gt; 0) and (isBasePath == false)</Condition>
+        </Flow>
+        <Flow name="resource_delete">
+            <Description></Description>
+            <Request/>
+            <Response/>
+            <Condition>(request.verb = "DELETE") and (path MatchesPath "/*") and (request.queryparams.count == 0) and (isBasePath == false)</Condition>
+        </Flow>
+        <Flow name="resource_conditional_delete">
+            <Description></Description>
+            <Request/>
+            <Response/>
+            <Condition>(request.verb = "DELETE") and (path MatchesPath "/") and (request.queryparams.count &gt; 0) and (isBasePath == false)</Condition>
+        </Flow>
+        <Flow name="resource_conditional_create">
+            <Description></Description>
+            <Request>
+                <Step>
+                    <Condition>request.header.Content-Type="application/xml"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_CheckXMLThreat</Name>
+                </Step>
+                <Step>
+                    <Condition>request.header.Content-Type="application/json"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_CheckJSONThreat</Name>
+                </Step>
+            </Request>
+            <Response/>
+            <Condition>(request.verb = "POST") and (path MatchesPath "/") and (request.header.If-None-Exist!=null and request.header.If-None-Exist!="" ) and (isBasePath == false)</Condition>
+        </Flow>
+        <Flow name="resource_create">
+            <Description></Description>
+            <Request>
+                <Step>
+                    <Condition>request.header.Content-Type="application/xml"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_CheckXMLThreat</Name>
+                </Step>
+                <Step>
+                    <Condition>request.header.Content-Type="application/json"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_CheckJSONThreat</Name>
+                </Step>
+            </Request>
+            <Response/>
+            <Condition>(request.verb = "POST") and (((path MatchesPath "/" ) and (request.queryparams.count == 0) and (isBasePath == false)) or ((isBasePath == true) and (path MatchesPath "/Binary")))</Condition>
+        </Flow>
+        <Flow name="resource_meta">
+            <Description></Description>
+            <Request>
+                <Step>
+                    <Condition>request.header.Content-Type="application/xml"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_CheckXMLThreat</Name>
+                </Step>
+                <Step>
+                    <Condition>request.header.Content-Type="application/json"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_CheckJSONThreat</Name>
+                </Step>
+            </Request>
+            <Response/>
+            <Condition>(request.verb = "POST") and ((path MatchesPath "/*/$meta-add" ) or (path MatchesPath "/*/_history/*/$meta-add" )) and (request.queryparams.count == 0) and (isBasePath == false)</Condition>
+        </Flow>
+        <Flow name="transaction">
+            <Description></Description>
+            <Request>
+                <Step>
+                    <Condition>request.header.Content-Type="application/xml"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_CheckXMLThreat</Name>
+                </Step>
+                <Step>
+                    <Condition>request.header.Content-Type="application/json"</Condition>
+                    <FaultRules/>
+                    <Name>HPX_CheckJSONThreat</Name>
+                </Step>
+            </Request>
+            <Response/>
+            <Condition>(path MatchesPath "/") and (request.verb = "POST") and (isBasePath == true)</Condition>
+        </Flow>
+        <Flow name="default">
+            <Description></Description>
+            <Request>
+                <Step>
+                    <FaultRules/>
+                    <Name>HPX_RaiseFault_Generic</Name>
+                </Step>
+            </Request>
+            <Response/>
+        </Flow>
+    </Flows>
+    <PostFlow name="PostFlow">
+        <Request/>
+        <Response>
+            <Step>
+                <Condition>(response.header.Content-Type=null) and (returnType=null or returnType=="" or !((returnType=="application/xml") or (returnType=="xml") or (returnType=="application/xml+fhir") or (returnType=="text/xml") or  (returnType=="application/xml;charset=UTF-8") or (returnType=="xml;charset=UTF-8") or(returnType=="application/xml+fhir;charset=UTF-8") or (returnType=="text/xml;charset=UTF-8"))) and (response.content!=null and response.content!="" ) and !((path MatchesPath "/Binary/*") or (path MatchesPath "/Binary/*/_history/*"))</Condition>
+                <FaultRules/>
+                <Name>HPX_SetResponseContentTypeToJSON</Name>
+            </Step>
+            <Step>
+                <Condition>(response.header.Content-Type=null) and ((returnType=="application/xml") or (returnType=="xml") or (returnType=="application/xml+fhir") or (returnType=="text/xml") or  (returnType=="application/xml;charset=UTF-8") or (returnType=="xml;charset=UTF-8") or(returnType=="application/xml+fhir;charset=UTF-8") or (returnType=="text/xml;charset=UTF-8")) and (response.content!=null and response.content!="" ) and !((path MatchesPath "/Binary/*") or (path MatchesPath "/Binary/*/_history/*"))</Condition>
+                <FaultRules/>
+                <Name>HPX_SetResponseContentTypeToXML</Name>
+            </Step>
+            <Step>
+                <Condition>response.status.code==200 or response.status.code == 201</Condition>
+                <FaultRules/>
+                <Name>HPX_ReplaceTargetLinkURLs</Name>
+            </Step>
+            <Step>
+                <Condition>response.status.code==200 or response.status.code == 201</Condition>
+                <FaultRules/>
+                <Name>HPX_AssignProxyResponse</Name>
+            </Step>
+            <Step>
+                <Condition>(response.header.Transfer-Encoding = null) and (returnType != null) and (response.content!=null and response.content!="" )</Condition>
+                <FaultRules/>
+                <Name>HPX_SetContentLength</Name>
+            </Step>
+        </Response>
+    </PostFlow>
+    <PreFlow name="PreFlow">
+        <Request>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_AccessControl</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_SetTargetBasepath</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_InitialConfiguration_JS</Name>
+            </Step>
+            <Step>
+                <FaultRules/>
+                <Name>HPX_SetReturnType</Name>
+            </Step>
+        </Request>
+        <Response/>
+    </PreFlow>
+    <HTTPProxyConnection>
+        <BasePath>/hapi-dstu2</BasePath>
+        <Properties/>
+        <VirtualHost>secure</VirtualHost>
+    </HTTPProxyConnection>
+    <RouteRule name="default">
+        <TargetEndpoint>default</TargetEndpoint>
+    </RouteRule>
+</ProxyEndpoint>

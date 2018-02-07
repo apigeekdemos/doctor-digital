@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<APIProxy revision="4" name="apiai-connector-backup">
+    <Basepaths>/backup/api/ai/connector/fhir</Basepaths>
+    <ConfigurationVersion majorVersion="4" minorVersion="0"/>
+    <CreatedAt>1517924644358</CreatedAt>
+    <CreatedBy>rmahalank@apigee.com</CreatedBy>
+    <DisplayName>apiai-connector</DisplayName>
+    <LastModifiedAt>1517924644358</LastModifiedAt>
+    <LastModifiedBy>rmahalank@apigee.com</LastModifiedBy>
+    <Policies>
+        <Policy>JavaScriptService-callout-response-processing</Policy>
+        <Policy>action-processing</Policy>
+        <Policy>impose-quota</Policy>
+        <Policy>print</Policy>
+        <Policy>remove-query-param-apikey</Policy>
+        <Policy>verify-api-key</Policy>
+    </Policies>
+    <ProxyEndpoints>
+        <ProxyEndpoint>default</ProxyEndpoint>
+    </ProxyEndpoints>
+    <Resources>
+        <Resource>jsc://action-processing.js</Resource>
+        <Resource>jsc://print.js</Resource>
+        <Resource>jsc://service-callout-response-processing.js</Resource>
+    </Resources>
+    <Spec></Spec>
+    <TargetServers/>
+    <TargetEndpoints>
+        <TargetEndpoint>default</TargetEndpoint>
+    </TargetEndpoints>
+</APIProxy>

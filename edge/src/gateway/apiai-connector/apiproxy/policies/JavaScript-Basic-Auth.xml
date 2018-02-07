@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Javascript async="false" continueOnError="false" enabled="true" timeLimit="200" name="JavaScript-Basic-Auth">
+    <DisplayName>JavaScript: Basic Auth</DisplayName>
+    <Properties/>
+    <IncludeURL>jsc://base64.js</IncludeURL>
+    <ResourceURL>jsc://basic-auth.js</ResourceURL>
+</Javascript>

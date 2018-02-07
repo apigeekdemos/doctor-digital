@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PopulateCache async="false" continueOnError="false" enabled="true" name="Populate-Cache-for-access-token">
+    <DisplayName>Populate Cache for access token</DisplayName>
+    <FaultRules/>
+    <Properties/>
+    <CacheKey>
+        <Prefix></Prefix>
+        <KeyFragment>access_token</KeyFragment>
+    </CacheKey>
+    <CacheResource>access-token</CacheResource>
+    <Scope>Global</Scope>
+    <ExpirySettings>
+        <TimeoutInSec>3540</TimeoutInSec>
+    </ExpirySettings>
+    <Source>accesstoken</Source>
+</PopulateCache>

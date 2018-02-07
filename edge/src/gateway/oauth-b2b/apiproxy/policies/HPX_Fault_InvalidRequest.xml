@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="HPX_Fault_InvalidRequest">
+    <DisplayName>HPX_Fault_InvalidRequest</DisplayName>
+    <FaultRules/>
+    <Properties/>
+    <Set>
+        <Payload contentType="application/json" variablePrefix="%" variableSuffix="#">
+        {
+          "resourceType": "OperationOutcome",
+          "text": {
+            "status": "generated",
+            "div": "&lt;div&gt;&lt;h1&gt;Operation Outcome&lt;/h1&gt;&lt;table border="0"&gt;&lt;tr&gt;&lt;td style="font-weight: bold;"&gt;error&lt;/td&gt;&lt;td&gt;[]&lt;/td&gt;&lt;td&gt;&lt;pre&gt;Invalid request: The FHIR endpoint on this server does not know how to handle %request.verb# operation[%proxy.pathsuffix#] with parameters [[%request.queryparams.names#]]&lt;/pre&gt;&lt;/td&gt;\n\t\t\t\t\t\n\t\t\t\t\n\t\t\t&lt;/tr&gt;\n\t\t&lt;/table&gt;\n\t&lt;/div&gt;"
+          },
+          "issue": [
+            {
+              "severity": "error",
+              "code": "processing",
+              "diagnostics": "Invalid request: The FHIR endpoint on this server does not know how to handle %request.verb# operation[%proxy.pathsuffix#] with parameters [[%request.queryparams.names#]]"
+            }
+          ]
+        }
+      	</Payload>
+        <StatusCode>400</StatusCode>
+        <ReasonPhrase>Bad Request</ReasonPhrase>
+    </Set>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+    <AssignTo type="request" transport="http" createNew="false"></AssignTo>
+</AssignMessage>

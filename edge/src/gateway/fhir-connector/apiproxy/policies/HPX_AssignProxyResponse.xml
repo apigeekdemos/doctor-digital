@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="HPX_AssignProxyResponse">
+    <DisplayName>AssignProxyResponse</DisplayName>
+    <FaultRules/>
+    <Properties/>
+    <Set>
+        <Payload>{proxyResponse}</Payload>
+    </Set>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+    <AssignTo type="request" transport="http" createNew="false"></AssignTo>
+</AssignMessage>
