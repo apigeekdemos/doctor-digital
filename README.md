@@ -39,7 +39,7 @@ nvm install --lts
 
 ##### Clone the repository
 ```
-git clone https://github.com/rohan-m/doctor-digital.git
+git clone sso://edge-se-internal/doctor-digital
 ```
 ##### Enter edge directory
 ```
@@ -144,3 +144,23 @@ curl -X POST \
 
 ```
 + [Optional end] ----
+
+## Switch to Backup
+Assuming you have the done the deployment,
+We need to change the web-hook endpoint basepath by appending `/backup` in the fulfillment section of the dialogflow agent
+for example - 
+```
+If you had `https://rmahalank1-eval-test.apigee.net/api/ai/connector/fhir?apikey=somekey` as webhook
+To switch to backup you need to change it to `https://rmahalank1-eval-test.apigee.net/backup/api/ai/connector/fhir?apikey=somekey`
+```
+
+## Contribution
+If you would like to contribute changes and want to let us know about it using the internal git, you can raise a CL
+To do that, clone the repo with the following command
+```
+git clone rpc://edge-se-internal/doctor-digital && (cd doctor-digital && curl -Lo `git rev-parse --git-dir`/hooks/commit-msg https://gerrit-review.googlesource.com/tools/hooks/commit-msg ; chmod +x `git rev-parse --git-dir`/hooks/commit-msg)
+```
+and while making any push commits to a branch
+``
+git push origin HEAD:refs/for/<branch>
+``
