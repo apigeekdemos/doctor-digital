@@ -146,11 +146,11 @@ if(action === "clinic.confirm"){
             
     
              var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(rad(lat)) * Math.cos(rad(lat)) * Math.sin(dLong/2) * Math.sin(dLong/2);
+                Math.cos(rad(lat)) * Math.cos(rad(mlat)) * Math.sin(dLong/2) * Math.sin(dLong/2);
             var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
             var d = R * c;
             distances[i] = d;
-            if ( closest == -1 || d < distances[closest] ) {
+            if ( closest === -1 || d < distances[closest] ) {
                 closest = i;
             }
         }
