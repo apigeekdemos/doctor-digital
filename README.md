@@ -39,7 +39,7 @@ nvm install --lts
 
 ##### Clone the repository
 ```
-git clone sso://edge-se-internal/doctor-digital
+git clone https://github.com/apigeekdemos/doctor-digital.git
 ```
 ##### Enter edge directory
 ```
